@@ -1,0 +1,123 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Your Shopping Cart | AuraShop{% endblock %}
+
+{% block content %}
+<div class="cart-page-container container">
+    <div class="section-header">
+        <span class="section-tag">Checkout Process</span>
+        <h1 class="section-title">Your Shopping Bag</h1>
+    </div>
+
+    {% if cart %}
+        <div class="cart-layout">
+            <!-- Cart Items List -->
+            <div class="cart-items-section">
+                <div class="cart-items-header">
+                    <span class="col-product">Product</span>
+                    <span class="col-price">Price</span>
+                    <span class="col-qty">Quantity</span>
+                    <span class="col-total">Subtotal</span>
+                </div>
+                
+                <div class="cart-items-body" id="cartItemsContainer">
+                    {% for item in cart %}
+                        <div class="cart-item-row" data-product-id="{{ item.product.id }}" id="cart-item-{{ item.product.id }}">
+                            <!-- Product Column -->
+                            <div class="col-product product-cell">
+                                <div class="cart-item-media">
+                                    {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                    {% else %}
+                                        <div class="cart-item-placeholder">
+                                            <i class="fa-solid fa-bag-shopping"></i>
+                                        </div>
+                                    {%     endif %}
+                                </div>
+                                <div class="cart-item-details">
+                                    <h3 class="cart-item-name">
+                                        <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
+                                    </h3>
+                                    <span class="cart-item-category">{{ item.product.category.name }}</span>
+                                    <button class="cart-remove-btn" onclick="removeFromCart({{ item.product.id }})">
+                                        <i class="fa-solid fa-trash-can"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Price Column -->
+                            <div class="col-price price-cell">
+                                <span class="price-label">Price:</span>
+                                <span class="price-value">LKR {{ item.price }}</span>
+                            </div>
+                            
+                            <!-- Qty Column -->
+                            <div class="col-qty qty-cell">
+                                <span class="qty-label">Qty:</span>
+                                <div class="quantity-picker flex-qty">
+                                    <button type="button" class="qty-btn dec-btn" onclick="updateQuantity({{ item.product.id }}, 'dec')">
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                    <input type="number" id="qty-{{ item.product.id }}" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="qty-input-field" readonly>
+                                    <button type="button" class="qty-btn inc-btn" onclick="updateQuantity({{ item.product.id }}, 'inc')">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Subtotal Column -->
+                            <div class="col-total subtotal-cell">
+                                <span class="subtotal-label">Subtotal:</span>
+                                <span class="subtotal-value" id="subtotal-{{ item.product.id }}">LKR {{ item.total_price }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Cart Summary Panel -->
+            <aside class="cart-summary-section">
+                <div class="summary-card">
+                    <h3 class="summary-title">Order Summary</h3>
+                    
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="summarySubtotal">LKR {{ cart.get_total_price }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="free-shipping">FREE</span>
+                    </div>
+                    
+                    <hr class="summary-divider">
+                    
+                    <div class="summary-row total-row">
+                        <span>Total Price</span>
+                        <span id="summaryTotal">LKR {{ cart.get_total_price }}</span>
+                    </div>
+                    
+                    <div class="summary-actions">
+                        <a href="{% url 'checkout' %}" class="btn btn-primary btn-block btn-lg">
+                            Proceed to Checkout <i class="fa-solid fa-credit-card"></i>
+                        </a>
+                        <a href="{% url 'product_list' %}" class="btn btn-outline btn-block">
+                            <i class="fa-solid fa-arrow-left-long"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-cart-state">
+            <div class="empty-cart-icon">
+                <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+            <h2>Your shopping bag is empty</h2>
+            <p>Looks like you haven't added anything to your cart yet. Let's find some premium gear for you!</p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Shop Our Products</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

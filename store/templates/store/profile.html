@@ -1,0 +1,99 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Your Profile | AuraShop{% endblock %}
+
+{% block content %}
+<div class="profile-page-container container">
+    <div class="section-header">
+        <span class="section-tag">Account Management</span>
+        <h1 class="section-title">Your Profile Settings</h1>
+    </div>
+
+    <div class="profile-layout">
+        <!-- Edit Profile Form -->
+        <div class="profile-form-section">
+            <h2 class="form-section-title">Personal Details</h2>
+            
+            <form action="{% url 'profile' %}" method="POST" class="profile-form">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {% for error in form.non_field_errors %}
+                            <p class="error-msg">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Username Display (Immutable) -->
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" value="{{ user.username }}" class="form-control field-disabled" disabled>
+                    <small class="field-help-text">Username cannot be changed.</small>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group col-6">
+                        <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <div class="field-error">{{ form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group col-6">
+                        <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <div class="field-error">{{ form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="field-error">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="profile-actions">
+                    <button type="submit" class="btn btn-primary btn-md">Save Changes</button>
+                    <a href="{% url 'logout' %}" class="btn btn-outline btn-md">Logout</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Recent Orders Summary -->
+        <div class="profile-orders-section">
+            <h2 class="form-section-title">Recent Orders</h2>
+            
+            {% if recent_orders %}
+                <div class="profile-orders-list">
+                    {% for order in recent_orders %}
+                        <div class="profile-order-item">
+                            <div class="order-id-date">
+                                <span class="order-id"><strong>{{ order.order_number }}</strong></span>
+                                <span class="order-date">{{ order.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="order-amt-status">
+                                <span class="order-amt">LKR {{ order.total_price }}</span>
+                                <span class="status-badge status-{{ order.status|lower }} badge-sm">{{ order.status }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a href="{% url 'order_history' %}" class="btn btn-outline btn-block btn-sm view-all-orders-btn">View All Orders</a>
+                </div>
+            {% else %}
+                <div class="empty-orders-substate">
+                    <i class="fa-solid fa-receipt"></i>
+                    <p>No recent orders found.</p>
+                    <a href="{% url 'product_list' %}" class="btn btn-primary btn-sm">Shop Now</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

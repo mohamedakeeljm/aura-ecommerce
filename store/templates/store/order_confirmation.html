@@ -1,0 +1,95 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Order Confirmed | AuraShop{% endblock %}
+
+{% block content %}
+<div class="confirmation-page-container container">
+    <!-- Success Banner -->
+    <div class="confirmation-banner">
+        <div class="success-icon-wrapper animate-scale-up">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h1 class="confirmation-title">Order Confirmed!</h1>
+        <p class="confirmation-subtitle">Thank you for shopping with us. Your order has been placed and is currently being processed.</p>
+        <span class="order-number-display">Order Number: <strong>{{ order.order_number }}</strong></span>
+    </div>
+
+    <!-- Order Details Layout -->
+    <div class="confirmation-layout">
+        <!-- Order Summary Details -->
+        <div class="confirmation-summary-section">
+            <h2 class="section-sub-title">Order Items</h2>
+            
+            <div class="summary-table">
+                <div class="summary-table-header">
+                    <span class="col-item">Product</span>
+                    <span class="col-qty-simple">Qty</span>
+                    <span class="col-price-simple">Price</span>
+                    <span class="col-total-simple">Subtotal</span>
+                </div>
+                
+                <div class="summary-table-body">
+                    {% for item in order.items.all %}
+                        <div class="summary-table-row">
+                            <span class="col-item">{{ item.product.name }}</span>
+                            <span class="col-qty-simple">{{ item.quantity }}</span>
+                             <span class="col-price-simple">LKR {{ item.price }}</span>
+                             <span class="col-total-simple">LKR {{ item.subtotal }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="summary-table-footer">
+                    <div class="summary-footer-row total-row">
+                         <span>Total Paid:</span>
+                         <span>LKR {{ order.total_price }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping & Details Info -->
+        <div class="confirmation-info-section">
+            <div class="info-card">
+                <h3 class="info-card-title">Shipping & Contact Details</h3>
+                
+                <div class="info-item">
+                    <span class="info-label">Customer Name</span>
+                    <span class="info-value">{{ order.customer_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email Address</span>
+                    <span class="info-value">{{ order.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone Number</span>
+                    <span class="info-value">{{ order.phone }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Delivery Address</span>
+                    <span class="info-value">{{ order.address }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">City</span>
+                    <span class="info-value">{{ order.city }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Order Date</span>
+                    <span class="info-value">{{ order.created_at|date:"F j, Y, g:i a" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="status-badge status-{{ order.status|lower }}">{{ order.status }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Row -->
+    <div class="confirmation-actions">
+        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Continue Shopping</a>
+        <a href="{% url 'order_history' %}" class="btn btn-outline btn-lg">View Order History</a>
+    </div>
+</div>
+{% endblock %}

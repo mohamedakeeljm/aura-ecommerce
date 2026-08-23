@@ -1,0 +1,69 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Order History | AuraShop{% endblock %}
+
+{% block content %}
+<div class="orders-page-container container">
+    <div class="section-header">
+        <span class="section-tag">Purchase Records</span>
+        <h1 class="section-title">Your Order History</h1>
+    </div>
+
+    {% if orders %}
+        <div class="orders-history-list">
+            {% for order in orders %}
+                <div class="order-history-card">
+                    <!-- Order Header -->
+                    <div class="order-card-header">
+                        <div class="order-meta-info">
+                            <div class="meta-item">
+                                <span class="meta-label">Order Number</span>
+                                <span class="meta-value"><strong>{{ order.order_number }}</strong></span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Date Placed</span>
+                                <span class="meta-value">{{ order.created_at|date:"F j, Y" }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Total Amount</span>
+                                <span class="meta-value total-val">LKR {{ order.total_price }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="order-status-wrapper">
+                            <span class="status-badge status-{{ order.status|lower }}">{{ order.status }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Body (Items details) -->
+                    <div class="order-card-body">
+                        <h4 class="items-title">Ordered Items</h4>
+                        <ul class="order-items-details-list">
+                            {% for item in order.items.all %}
+                                <li>
+                                    <span class="item-desc">
+                                        <strong>{{ item.product.name }}</strong>
+                                        <span class="item-qty-lbl">&times; {{ item.quantity }}</span>
+                                    </span>
+                                    <span class="item-sub-val">LKR {{ item.subtotal }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-orders-state">
+            <div class="empty-orders-icon">
+                <i class="fa-solid fa-receipt"></i>
+            </div>
+            <h2>No orders found</h2>
+            <p>You haven't placed any orders with us yet. When you complete a checkout, your orders will appear here.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Browse Products</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

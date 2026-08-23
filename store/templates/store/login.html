@@ -1,0 +1,43 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Login | AuraShop{% endblock %}
+
+{% block content %}
+<div class="auth-page-container container">
+    <div class="auth-card animate-fade-in">
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Access your AuraShop account, orders, and details</p>
+        </div>
+
+        <form action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="POST" class="auth-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {% for error in form.non_field_errors %}
+                        <p class="error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg auth-submit-btn">Login</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="{% url 'register' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">Create an Account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} | AuraShop{% endblock %}
+
+{% block content %}
+<div class="product-detail-container container">
+    <div class="product-detail-layout">
+        <!-- Product Image Gallery -->
+        <div class="product-detail-media">
+            <div class="detail-image-wrapper">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="detail-main-image">
+                {% else %}
+                    <div class="detail-image-placeholder">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Buying Form & Details -->
+        <div class="product-detail-info">
+            <span class="detail-category">{{ product.category.name }}</span>
+            <h1 class="detail-title">{{ product.name }}</h1>
+            
+            <div class="detail-price-row">
+                <span class="detail-price">LKR {{ product.price }}</span>
+                {% if product.stock > 0 %}
+                    <span class="stock-status in-stock"><i class="fa-solid fa-circle-check"></i> In Stock ({{ product.stock }} available)</span>
+                {% else %}
+                    <span class="stock-status out-of-stock"><i class="fa-solid fa-circle-xmark"></i> Out of Stock</span>
+                {% endif %}
+            </div>
+
+            <hr class="detail-divider">
+
+            <div class="detail-description-section">
+                <h3>About this item</h3>
+                <p class="detail-description">{{ product.description }}</p>
+            </div>
+
+            <hr class="detail-divider">
+
+            {% if product.stock > 0 %}
+                <form action="{% url 'cart_add' product.id %}" method="GET" class="detail-purchase-form">
+                    <div class="quantity-picker-wrapper">
+                        <label for="qty" class="quantity-label">Quantity</label>
+                        <div class="quantity-picker">
+                            <button type="button" class="qty-btn dec-btn" onclick="adjustProductDetailQty(-1)"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" id="qty" name="qty" value="1" min="1" max="{{ product.stock }}" class="qty-input" readonly>
+                            <button type="button" class="qty-btn inc-btn" onclick="adjustProductDetailQty(1)"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg btn-block btn-flex">
+                        <i class="fa-solid fa-cart-plus"></i> Add to Shopping Bag
+                    </button>
+                </form>
+            {% else %}
+                <div class="out-of-stock-alert">
+                    <i class="fa-solid fa-envelope"></i> This item is temporarily out of stock. Please check back later.
+                </div>
+                <button class="btn btn-disabled btn-lg btn-block" disabled>Out of Stock</button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+        <section class="related-products-section">
+            <div class="section-header">
+                <span class="section-tag">Recommendations</span>
+                <h2 class="section-title">Related Products</h2>
+            </div>
+            
+            <div class="product-grid">
+                {% for related in related_products %}
+                    <div class="product-card">
+                        <a href="{% url 'product_detail' related.id %}" class="product-card-image-link">
+                            <div class="product-image-container">
+                                {% if related.image %}
+                                    <img src="{{ related.image.url }}" alt="{{ related.name }}" class="product-image">
+                                {% else %}
+                                    <div class="product-image-placeholder">
+                                        <i class="fa-solid fa-bag-shopping"></i>
+                                    </div>
+                                {% endif %}
+                                {% if related.stock <= 0 %}
+                                    <span class="badge badge-danger">Out of Stock</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        
+                        <div class="product-info">
+                            <span class="product-category-label">{{ related.category.name }}</span>
+                            <h3 class="product-name">
+                                <a href="{% url 'product_detail' related.id %}">{{ related.name }}</a>
+                            </h3>
+                            <div class="product-price-row">
+                                <span class="product-price">LKR {{ related.price }}</span>
+                            </div>
+                            
+                            <div class="product-card-actions">
+                                <a href="{% url 'product_detail' related.id %}" class="btn btn-outline btn-sm btn-flex">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function adjustProductDetailQty(change) {
+        const input = document.getElementById('qty');
+        if (!input) return;
+        
+        let val = parseInt(input.value) + change;
+        const min = parseInt(input.getAttribute('min'));
+        const max = parseInt(input.getAttribute('max'));
+        
+        if (val < min) val = min;
+        if (val > max) val = max;
+        
+        input.value = val;
+    }
+</script>
+{% endblock %}
