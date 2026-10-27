@@ -97,10 +97,13 @@ The server will boot up locally at:
 
 ---
 
-## Demo Credentials for Testing
-To test the checkout flow, order history, and Admin Panel:
+## Demo Credentials for Testing (Local Development Only)
 - **Admin Panel URL**: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
-- **Superuser Username**: `admin`
-- **Superuser Password**: `admin12345`
 
-*Note: You can also register new normal accounts using the Sign Up page.*
+> [!WARNING]
+> For local testing, a default user `admin` with password `admin12345` is seeded. 
+> **Never use these credentials in a live production environment.** For secure production setup, create a new administrator account by running:
+> ```bash
+> python manage.py createsuperuser
+> ```
+
