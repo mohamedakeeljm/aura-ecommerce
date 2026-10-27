@@ -9,7 +9,7 @@ ENV/
 env/
 
 # Database
-db.sqlite3
+# db.sqlite3 (included for portfolio demo)
 
 # Media uploads (user uploaded images)
 # media/products/ (kept for portfolio demo images)
