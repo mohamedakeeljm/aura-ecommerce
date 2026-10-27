@@ -213,11 +213,15 @@ hr {
 
 /* 3. Hero & Banners */
 .hero-section {
+    min-height: calc(100vh - 72px);
+    min-height: calc(100dvh - 72px);
+    display: flex;
+    align-items: center;
     background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
     background-size: cover;
     background-position: center;
     position: relative;
-    padding: 7rem 0;
+    padding: 3rem 0;
     color: var(--color-text-white);
     overflow: hidden;
 }
